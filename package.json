@@ -98,11 +98,7 @@
     "semi": false
   },
   "dependencies": {
-    "@types/express": "^4.11.1",
     "@types/node-fetch": "^1.6.7",
-    "node-fetch": "^2.0.0",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2",
-    "whatwg-fetch": "^2.0.3"
+    "node-fetch": "^2.0.0"
   }
 }
