@@ -8,7 +8,37 @@ import { ServerResponse } from "http"
 const SWISH_ENDPOINT = "https://mss.swicpc.bankgirot.se/swish-cpcapi/api/v1"
 const SWISH_PAYMENT_IP = process.env.NODE_ENV === "production" ? "194.242.111.220:443" : ""
 
-import { PaymentRequestType, PaymentResponseType, RefundRequestType } from "./types"
+export interface PaymentBase {
+  amount: string
+  currency: string
+  callbackUrl: string
+  payerAlias?: string
+  payeeAlias: string
+  message: string
+}
+
+export interface PaymentRequest extends PaymentBase {
+  payeePaymentReference?: string
+}
+
+export interface PaymentResponse extends PaymentBase {
+  id: string
+  paymentReference: string
+  status: string
+  dateCreated: string
+  datePaid?: string
+  errorCode?: string
+  errorMessage?: string
+  additionalInformation?: string
+}
+
+export interface RefundRequest {
+  payerPaymentReference?: string
+  originalPaymentReference: string
+  paymentReference?: string
+  callbackUrl: string
+  payerAlias?: string
+}
 
 export default class SwishPayments {
   constructor(private cert: AgentOptions) {}
@@ -18,7 +48,7 @@ export default class SwishPayments {
    * @param  {string} token
    * @returns PaymentResponseType
    */
-  getPayment(token: string): Promise<PaymentResponseType> {
+  getPayment(token: string): Promise<PaymentResponse> {
     return fetch(`${SWISH_ENDPOINT}/paymentrequests/${token}`, {
       agent: new https.Agent(this.cert)
     })
@@ -31,7 +61,7 @@ export default class SwishPayments {
    * @param  {PaymentRequestType} data
    * @returns Promise
    */
-  paymentRequest(data: PaymentRequestType): Promise<string> {
+  paymentRequest(data: PaymentRequest): Promise<string> {
     return fetch(`${SWISH_ENDPOINT}/paymentrequests`, {
       agent: new https.Agent(this.cert),
       method: "POST",
@@ -47,7 +77,7 @@ export default class SwishPayments {
    * @param  {RefundRequestType} data
    * @returns Promise
    */
-  refundRequest(data: RefundRequestType): Promise<any | Error> {
+  refundRequest(data: RefundRequest): Promise<any | Error> {
     return fetch(`${SWISH_ENDPOINT}/paymentrequests`, {
       agent: new https.Agent(this.cert),
       method: "POST",
