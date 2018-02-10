@@ -12,23 +12,34 @@ Install the package with:
 
 ## Usage
 
-The package needs to be configured with your Swish certificate and passphrase.
-
 ```js
 import Swish from "swish-payments"
 
+// The package needs to be configured with your Swish certificate and passphrase.
 const swish = new Swish({
   pfx: __dirname + "/ssl/1231181189.p12",
   passphrase: "swish"
 })
 
 // Setup payment request webook
-app.post("/paymentrequests", swish.createHook(payment =>
-  console.log("incoming payment :", payment)
+app.post("/paymentrequests", swish.createHook(payment => {
+  console.log("incoming payment: ", payment)
+
+  // Refund payment
+  const refund = await swish.refundRequest({
+    originalPaymentReference: payment.id,
+    callbackUrl: "https://example.com/refunds/" // should be absolute url of webhook above
+  })
+
+}))
+
+// Setup refund request webook
+app.post("/refunds", swish.createHook(refund =>
+  console.log("incoming refund: ", refund)
 ))
 
 const token = await swish.paymentRequest({
-  callbackUrl: "https://example.com/hooks/payments/",
+  callbackUrl: "https://example.com/paymentrequests/", // should be absolute url of webhook above
   payerAlias: "46700123456",
   payeeAlias: "1231181189",
   amount: "100.00",

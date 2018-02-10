@@ -19,8 +19,17 @@ export type PaymentRequestType = {
   message?: string
 }
 
+export type RefundRequestType = {
+  payerPaymentReference?: string
+  originalPaymentReference: string
+  paymentReference?: string
+  callbackUrl: string
+  payerAlias?: string
+}
+
 export default class SwishPayments {
   constructor(private cert: AgentOptions) {}
+
   getPayment(token: string) {
     return fetch(`${SWISH_ENDPOINT}/paymentrequests/${token}`, {
       agent: new https.Agent(this.cert)
@@ -28,20 +37,30 @@ export default class SwishPayments {
       .then((res: any) => res.json())
       .catch(handleError)
   }
+
   paymentRequest(data: PaymentRequestType) {
     return fetch(`${SWISH_ENDPOINT}/paymentrequests`, {
       agent: new https.Agent(this.cert),
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" }
     })
       .then(handleToken)
       .catch(handleError)
   }
 
-  createHook(onPayment: Function) {
+  refundRequest(data: RefundRequestType) {
+    return fetch(`${SWISH_ENDPOINT}/paymentrequests`, {
+      agent: new https.Agent(this.cert),
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(handleToken)
+      .catch(handleError)
+  }
+
+  createHook(callback: Function) {
     return (req: Request, res: Response): ServerResponse => {
       const ip = (req.connection && req.connection.remoteAddress) || ""
 
@@ -49,7 +68,7 @@ export default class SwishPayments {
         return res.status(401).send("not authorized")
       }
 
-      onPayment(req.body)
+      callback(req.body)
       return res.status(201)
     }
   }

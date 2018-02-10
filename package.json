@@ -1,6 +1,6 @@
 {
   "name": "swish-payments",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "",
   "keywords": [],
   "main": "dist/swish-payment.umd.js",
@@ -10,7 +10,7 @@
   "author": "Carl Barrdahl <carlbarrdahl@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/squish-platform/swish-payments"
   },
   "license": "MIT",
   "engines": {
@@ -28,7 +28,7 @@
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "semantic-release": "semantic-release",
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
     "precommit": "lint-staged"
   },
@@ -84,7 +84,7 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.11.0",
-    "semantic-release": "^12.2.2",
+    "semantic-release": "^12.4.1",
     "ts-jest": "^22.0.0",
     "ts-node": "^4.1.0",
     "tslint": "^5.8.0",
