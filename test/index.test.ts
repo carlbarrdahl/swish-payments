@@ -13,12 +13,12 @@ describe("Swish payment", () => {
 
   it("handles a payment requests", async () => {
     const token = await swish.paymentRequest({
-      message: "foo",
+      message: "",
       callbackUrl: "https://example.com/paymentrequestss",
       amount: "100.00",
       currency: "SEK",
       payeeAlias: "1231181189",
-      payerAlias: "46700123457"
+      payerAlias: "46700123456"
     })
 
     expect(token).toBeDefined()

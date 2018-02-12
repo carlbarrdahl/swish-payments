@@ -3,7 +3,6 @@ import fetch from "node-fetch"
 import https, { AgentOptions } from "https"
 
 import { Request, Response, RequestHandler } from "express"
-import { ServerResponse } from "http"
 
 const SWISH_ENDPOINT = "https://mss.swicpc.bankgirot.se/swish-cpcapi/api/v1"
 const SWISH_PAYMENT_IP = process.env.NODE_ENV === "production" ? "194.242.111.220:443" : ""
@@ -90,8 +89,8 @@ export default class SwishPayments {
    *
    * @param  {Function} callback
    */
-  createHook(callback: Function) {
-    return (req: Request, res: Response): ServerResponse => {
+  createHook(callback: Function): RequestHandler {
+    return (req: Request, res: Response) => {
       const ip = (req.connection && req.connection.remoteAddress) || ""
 
       if (!ip.includes(SWISH_PAYMENT_IP)) {
@@ -104,15 +103,14 @@ export default class SwishPayments {
   }
 }
 
-function handleToken(res: any) {
-  if (res.status === 201) {
+async function handleToken(res: any) {
+  if (res.status !== 201) {
+    throw await res.json()
+  } else {
     return res.headers.get("location").split("paymentrequests/")[1]
   }
-
-  throw new Error(res.statusText)
 }
 
 function handleError(err: Error) {
-  console.log("handleError", err)
-  return err
+  throw err
 }
