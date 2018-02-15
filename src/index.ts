@@ -1,4 +1,3 @@
-import fs from "fs"
 import fetch from "node-fetch"
 import https, { AgentOptions } from "https"
 
