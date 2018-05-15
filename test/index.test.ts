@@ -1,10 +1,16 @@
 import * as fs from "fs"
 import SwishPayment from "../src/"
 
+const serverIP = "213.132.115.94:443"
 const swish = new SwishPayment({
-  pfx: fs.readFileSync(__dirname + "/../ssl/1231181189.p12"),
-  passphrase: "swish"
+  endpoint: "https://mss.swicpc.bankgirot.se/swish-cpcapi/api/v1",
+  serverIP,
+  cert: {
+    pfx: fs.readFileSync(__dirname + "/../ssl/1231181189.p12"),
+    passphrase: "swish"
+  }
 })
+
 describe("Swish payment", () => {
   it("Swish is instantiable", () => {
     expect(swish).toBeInstanceOf(SwishPayment)
@@ -35,10 +41,11 @@ describe("Swish payment", () => {
     }
     const mock = {
       callback: jest.fn(),
-      req: { body: mockPayment, connection: { remoteAddress: "194.242.111.220:443" } },
+      req: { body: mockPayment, connection: { remoteAddress: serverIP } },
       res: { status: jest.fn() }
     }
     const hook = swish.createHook(mock.callback)
+
     hook(mock.req, mock.res)
 
     expect(mock.callback).toHaveBeenCalledWith(mockPayment)

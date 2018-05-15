@@ -17,8 +17,12 @@ import Swish from "swish-payments"
 
 // The package needs to be configured with your Swish certificate and passphrase.
 const swish = new Swish({
-  pfx: __dirname + "/ssl/1231181189.p12",
-  passphrase: "swish"
+  endpoint: "https://mss.swicpc.bankgirot.se/swish-cpcapi/api/v1",
+  serverIP: "213.132.115.94:443",
+  cert: {
+    pfx: fs.readFileSync(__dirname + "/ssl/1231181189.p12"),
+    passphrase: "swish"
+  }
 })
 
 // Setup payment request webook

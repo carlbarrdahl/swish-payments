@@ -3,9 +3,6 @@ import https, { AgentOptions } from "https"
 
 import { Request, Response, RequestHandler } from "express"
 
-const SWISH_ENDPOINT = "https://mss.swicpc.bankgirot.se/swish-cpcapi/api/v1"
-const SWISH_PAYMENT_IP = process.env.NODE_ENV === "production" ? "194.242.111.220:443" : ""
-
 export interface PaymentBase {
   amount: string
   currency: string
@@ -39,7 +36,7 @@ export interface RefundRequest {
 }
 
 export default class SwishPayments {
-  constructor(private cert: AgentOptions) {}
+  constructor(private opts: { endpoint: string; serverIP: string; cert: AgentOptions }) {}
   /**
    * Get payment from payment request token
    *
@@ -47,8 +44,8 @@ export default class SwishPayments {
    * @returns PaymentResponseType
    */
   getPayment(token: string): Promise<PaymentResponse> {
-    return fetch(`${SWISH_ENDPOINT}/paymentrequests/${token}`, {
-      agent: new https.Agent(this.cert)
+    return fetch(`${this.opts.endpoint}/paymentrequests/${token}`, {
+      agent: new https.Agent(this.opts.cert)
     })
       .then(res => res.json())
       .catch(handleError)
@@ -60,8 +57,8 @@ export default class SwishPayments {
    * @returns Promise
    */
   paymentRequest(data: PaymentRequest): Promise<string> {
-    return fetch(`${SWISH_ENDPOINT}/paymentrequests`, {
-      agent: new https.Agent(this.cert),
+    return fetch(`${this.opts.endpoint}/paymentrequests`, {
+      agent: new https.Agent(this.opts.cert),
       method: "POST",
       body: JSON.stringify({ ...data, currency: "SEK" }),
       headers: { "Content-Type": "application/json" }
@@ -76,8 +73,8 @@ export default class SwishPayments {
    * @returns Promise
    */
   refundRequest(data: RefundRequest): Promise<any | Error> {
-    return fetch(`${SWISH_ENDPOINT}/paymentrequests`, {
-      agent: new https.Agent(this.cert),
+    return fetch(`${this.opts.endpoint}/paymentrequests`, {
+      agent: new https.Agent(this.opts.cert),
       method: "POST",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" }
@@ -92,7 +89,7 @@ export default class SwishPayments {
     return (req: Request, res: Response) => {
       const ip = (req.connection && req.connection.remoteAddress) || ""
 
-      if (!ip.includes(SWISH_PAYMENT_IP)) {
+      if (!ip.includes(this.opts.serverIP)) {
         return res.status(401).send("not authorized")
       }
 
