@@ -1,8 +1,10 @@
 {
   "name": "swish-payments",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "author": "Carl Barrdahl <carlbarrdahl@gmail.com>",
   "repository": {
     "type": "git",
@@ -22,21 +24,30 @@
   "keywords": [],
   "devDependencies": {
     "@types/jest": "^22.1.2",
-    "@types/node": "^9.4.6",
+    "@types/node": "^10.0.9",
     "jest": "^22.3.0",
     "nodemon": "^1.14.12",
     "ts-jest": "^22.0.4",
-    "ts-node": "^4.1.0",
-    "typescript": "^2.7.1"
+    "ts-node": "^6.0.3",
+    "typescript": "^2.8.3"
   },
   "prettier": {
     "semi": false
   },
   "jest": {
-    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testMatch": ["**/__tests__/*.(ts|tsx|js)"]
+    "testMatch": [
+      "**/test/*.(ts|tsx|js)"
+    ]
+  },
+  "dependencies": {
+    "node-fetch": "^2.1.2"
   }
 }
