@@ -26,7 +26,7 @@ const swish = new Swish({
 })
 
 // Setup payment request webook
-app.post("/paymentrequests", swish.createHook(payment => {
+app.post("/paymentrequests", swish.createHook(async payment => {
   console.log("incoming payment: ", payment)
 
   // Refund payment
