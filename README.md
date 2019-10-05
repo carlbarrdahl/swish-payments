@@ -2,7 +2,9 @@
 
 The Swish Payments library provides convenient access to Swish API from server-side applications.
 
+
 ## Documentation
+Node.js library for the Swish API https://carlbarrdahl.github.io/swish-payments/
 
 ## Installation
 
